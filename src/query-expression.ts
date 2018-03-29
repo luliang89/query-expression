@@ -1,7 +1,10 @@
 
 import { Operator, OPERATORS } from './operator';
 
-export type Joiner = 'AND' | 'OR';
+export enum Joiner {
+    and = 'AND',
+    or = 'OR'
+}
 
 export class QueryExpression {
 
@@ -103,12 +106,12 @@ export class QueryExpression {
 
     and(field: string, value: any, operator = Operator.equal) {
         let exp = new QueryExpression(field, value, operator);
-        return this.join('AND', exp);
+        return this.join(Joiner.and, exp);
     }
 
     or(field: string, value: any, operator = Operator.equal) {
         let exp = new QueryExpression(field, value, operator);
-        return this.join('OR', exp);
+        return this.join(Joiner.or, exp);
     }
 
     group() {
