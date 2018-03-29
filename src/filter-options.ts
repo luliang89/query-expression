@@ -1,4 +1,6 @@
 
+import { Match, Required, Length, Value, StringType, Validation } from 'ichipsea.validators';
+
 import { QueryExpression } from './query-expression';
 
 export class Ordering {
@@ -11,10 +13,10 @@ export class Ordering {
 
 export class Limit {
 
-    //@Required()
+    @Required()
     offset: number
 
-    //@Required()
+    @Required()
     rows: number
 
 }
@@ -24,37 +26,37 @@ export class Limit {
  */
 export class FilterOptions {
 
-    // @Match({
-    //     value: [true, false]
-    // })
+    @Match({
+        value: [true, false]
+    })
     count?: boolean
 
     /**
      * 查询表达式
      */
-    // @Validation()
+    @Validation()
     expression?: QueryExpression
 
     /**
      * 要查询的字段
      */
-    // @Length({
-    //     min: 1
-    // })
+    @Length({
+        min: 1
+    })
     fields?: string[]
 
     /**
      * 分页
      */
-    // @Validation()
+    @Validation()
     limit?: Limit
 
-    // @Validation()
-    orderBy?: string | Ordering | Ordering[]
+    @Validation()
+    orderBy?: string | string[] | Ordering | Ordering[]
 
-    // @Length({
-    //     min: 1
-    // })
+    @Length({
+        min: 1
+    })
     groupBy?: string | string[]
 
 }
