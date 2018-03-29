@@ -4,7 +4,7 @@ import assert = require('assert');
 
 import { Operator } from '../src/operator';
 
-import { QueryExpression } from '../src/query-expression';
+import { QueryExpression, Joiner } from '../src/query-expression';
 
 import { MysqlProvider } from '../src/mysql-provider';
 
@@ -58,7 +58,7 @@ describe('QueryExpression', function () {
             let exp = new QueryExpression('n', 'n')
                 .or('m', 'm')
                 .group()
-                .join('AND', exp2);
+                .join(Joiner.and, exp2);
 
             let json = JSON.stringify(exp);
             let [where, params] = provider.toWhere(QueryExpression.from(JSON.parse(json)));

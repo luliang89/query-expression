@@ -4,7 +4,7 @@ import assert = require('assert');
 
 import { Operator } from '../src/operator';
 
-import { QueryExpression } from '../src/query-expression';
+import { QueryExpression, Joiner } from '../src/query-expression';
 
 import { FilterOptions, Ordering } from '../src/filter-options';
 
@@ -42,7 +42,7 @@ describe('MysqlProvider', function () {
             let exp = new QueryExpression('n', 'n')
                 .or('m', 'm')
                 .group()
-                .join('AND', exp2);
+                .join(Joiner.and, exp2);
             let [where, params] = provider.toWhere(exp);
             //console.log(where, JSON.stringify(exp));
             let ok = 'WHERE ( `n` = ? OR `m` = ? ) AND ( `x` = ? OR `y` = ? )' === where && params[0] === 'n';
