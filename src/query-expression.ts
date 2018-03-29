@@ -82,7 +82,7 @@ export class QueryExpression {
             //将日期时间字符串反序列化为Date
             if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/.test(value)) {
                 this.value = new Date(value);
-            } else{
+            } else {
                 this.value = value;
             }
             this.operator = operator;
