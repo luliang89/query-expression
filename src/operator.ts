@@ -36,6 +36,8 @@ export enum Operator {
 
     in = 'IN',
 
+    notIn = 'NOT IN',
+
     /**
      * 模糊查询
      */
@@ -48,9 +50,10 @@ export enum Operator {
 }
 
 
-export const operators = [
+export const OPERATORS = [
     Operator.equal,
     Operator.in,
+    Operator.notIn,
     Operator.is,
     Operator.isNot,
     Operator.lessThan,

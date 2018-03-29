@@ -93,4 +93,23 @@ describe('MysqlProvider', function () {
 
     })
 
+    describe('toCommand', function () {
+
+        it('limit', function (done) {
+            let opts = new FilterOptions();
+            opts.expression = new QueryExpression('createDate', 'a');
+            opts.limit = {
+                offset: 0,
+                rows: 10
+            };
+            let [orderBy, where, params] = provider.toCommand(opts);
+            //console.log(orderBy, where);
+            let ok = where === 'WHERE `create_date` = ?'
+                && orderBy === 'LIMIT 0,10';
+            assert.ok(ok);
+            done();
+        })
+
+    })
+
 })

@@ -1,5 +1,5 @@
 
-import { Operator } from './operator';
+import { Operator, OPERATORS } from './operator';
 
 import { QueryExpression } from './query-expression';
 
@@ -15,16 +15,16 @@ export class MysqlProvider implements Provider {
         return '`' + helper.toUnderline(field) + '`';
     }
 
-    toValue(value: any) {
-        //nodejs运行时为0时区，必须将日期时间字符串反序列化为Date，由mysql驱动转换时区
-        if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z?$/.test(value)) {
-            return new Date(value);
-        }
-        return value;
-    }
+    // toValue(value: any) {
+    //     //nodejs运行时为0时区，必须将日期时间字符串反序列化为Date，由mysql驱动转换时区
+    //     if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z?$/.test(value)) {
+    //         return new Date(value);
+    //     }
+    //     return value;
+    // }
 
     toRelation(field: string, op: Operator) {
-        return `${this.toDbName(field)} ${op} ${op === Operator.in ? '(?)' : '?'}`;
+        return `${this.toDbName(field)} ${op} ${op === Operator.in || op === Operator.notIn ? '(?)' : '?'}`;
     }
 
     toWhere(exp: QueryExpression): [string, any[]] {
@@ -42,7 +42,8 @@ export class MysqlProvider implements Provider {
         }
 
         wheres.push(this.toRelation(exp.field, exp.operator));
-        params.push(this.toValue(exp.value));
+        // params.push(this.toValue(exp.value));
+        params.push(exp.value);
 
         let prev = exp.prev;
         while (prev) {
@@ -60,7 +61,8 @@ export class MysqlProvider implements Provider {
             }
 
             wheres.push(this.toRelation(prev.exp.field, prev.exp.operator));
-            params.push(this.toValue(prev.exp.value));
+            // params.push(this.toValue(prev.exp.value));
+            params.push(prev.exp.value);
 
             prev = prev.exp.prev;
         }
@@ -114,7 +116,7 @@ export class MysqlProvider implements Provider {
 
         let query = '';
 
-        let results: [string, string, any[]] = [query, '', null];
+        let results: [string, string, any[]] = [null, '', null];
 
         if (opts.expression) {
             let [where, params] = this.toWhere(opts.expression);
@@ -133,6 +135,8 @@ export class MysqlProvider implements Provider {
         if (opts.limit) {
             query += ` LIMIT ${opts.limit.offset},${opts.limit.rows}`
         }
+
+        results[0] = query.trim();
 
         return results;
 

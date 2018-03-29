@@ -1,20 +1,42 @@
 
-import { Operator } from './operator';
+import { Operator, OPERATORS } from './operator';
 
 export type Joiner = 'AND' | 'OR';
 
 export class QueryExpression {
 
-    static from(model: { [k: string]: any }, keys?: string[]) {
-        if (!model) {
+    static from(arr: any[]) {
+        if (!arr || !arr.length) {
             return null;
         }
-        keys = keys || Object.keys(model);
-        let exp = new QueryExpression(keys[0], model[keys[0]]);
-        for (let i = 1; i < keys.length; i++) {
-            exp = exp.and(keys[i], model[keys[i]]);
+        if (!Array.isArray(arr) || arr.length < 3) {
+            throw new Error('not support the arr');
+        }
+        // console.log(typeof arr, arr.length, arr[1], OPERATORS.indexOf(arr[1]));
+        if (OPERATORS.indexOf(arr[1]) === -1) {
+            throw new Error('not support the Operator');
+        }
+        let exp = new QueryExpression(arr[0], arr[2], arr[1]);
+        if (arr.length > 3) {
+            let prev = QueryExpression.from(arr[4]);
+            exp = prev.join(arr[3], exp);
+            if (arr[5]) {
+                exp.group();
+            }
         }
         return exp;
+    }
+
+    toJSON() {
+        let arr = [this.field, this.operator, this.value];
+        if (this._prev) {
+            arr.push(this._prev.joiner);
+            arr.push(this._prev.exp.toJSON());
+        }
+        if (this.grouped) {
+            arr.push(this.grouped);
+        }
+        return arr;
     }
 
     public readonly field: string;
@@ -57,7 +79,12 @@ export class QueryExpression {
             this.value = value[0];
             this.operator = Operator.equal;
         } else {
-            this.value = value;
+            //将日期时间字符串反序列化为Date
+            if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/.test(value)) {
+                this.value = new Date(value);
+            } else{
+                this.value = value;
+            }
             this.operator = operator;
         }
     }
