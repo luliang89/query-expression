@@ -1,6 +1,6 @@
 {
   "name": "query-expression",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "a cross-database query expression",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
